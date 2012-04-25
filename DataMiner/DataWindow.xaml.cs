@@ -41,6 +41,9 @@ namespace DataMiner
             newTab.Header = stockSymbol;
             //UpdateContent
             this.StockSymbolTabs.Items.Add(newTab);
+            this.StockSymbolTabs.SelectedIndex = this.StockSymbolTabs.Items.Count - 1;
+
+
         }
     }
 }

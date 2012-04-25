@@ -25,7 +25,12 @@
                     </Setter>
                 </Style>
             </TabControl.Resources>
-            <TabItem Header="New Search" MouseUp="newSearch"/>
+            <TabItem Header="New Search" MouseUp="newSearch">
+                <TextBlock>
+                Click on a stock symbol to view information.<LineBreak/>
+                You can click the time tabs in order to change the time period of data used.
+                </TextBlock>
+            </TabItem>
 
         </TabControl>
     </Grid>

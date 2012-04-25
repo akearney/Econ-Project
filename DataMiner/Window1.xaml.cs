@@ -55,7 +55,9 @@ namespace DataMiner
                 this.Grid.Children.Add(graph);
                 dataWindow = new DataWindow();
                 dataWindow.Owner = this;
+                dataWindow.dealWithResults(searchItem);
                 this.dataWindow.Show();
+                this.Hide();
             }
         }
 
