@@ -23,6 +23,7 @@ namespace DataMiner
         #region Locals
         //Handles all of the we requesting
         private WebInteractor webInteractor;
+        private DataWindow dataWindow;
         #endregion
 
         #region Constants
@@ -44,14 +45,25 @@ namespace DataMiner
             Image graph = webInteractor.getYearGraph();
             if (graph != null)
             {
-                this.Title.Margin = new System.Windows.Thickness(10);
-                this.Title.Text = searchItem + " Year";
-                this.SearchChildren = null;
+                //this.Title.Margin = new System.Windows.Thickness(10);
+                //this.Title.Text = searchItem + " Year";
+                
+                this.Grid.Children.Remove(SearchChildren);
                 StackPanel picturePanel = new StackPanel();
 
 
                 this.Grid.Children.Add(graph);
+                dataWindow = new DataWindow();
+                dataWindow.Owner = this;
+                this.dataWindow.Show();
             }
+        }
+
+        public void newSearch(string searchItem)
+        {
+            string result = webInteractor.Search(searchItem);
+            Image graph = webInteractor.getYearGraph();
+            this.dataWindow.dealWithResults(searchItem);
         }
     }
 }

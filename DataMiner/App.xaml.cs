@@ -12,5 +12,13 @@ namespace DataMiner
     /// </summary>
     public partial class App : Application
     {
+        void app_Startup(object sender, StartupEventArgs e)
+        {
+            // Create a window
+            Window window = new Window1();
+            // Open a window
+            window.Show();
+        }
+
     }
 }
