@@ -8,7 +8,7 @@
         </TextBlock>
         <StackPanel Name="SearchChildren" Height="50" Width="170" Orientation="Horizontal">
 
-            <TextBox Name="SearchBox" Width="100" Height="20">
+            <TextBox Name="SearchBox" Width="100" Height="20" MouseDown="searchBoxMouseDown" GotKeyboardFocus="searchBoxMouseDown">
                 Enter Stock Code
             </TextBox>
             <Button Name="SearchButton" Width="50" Height="20" Content="Search" Click="searchButtonClick" />

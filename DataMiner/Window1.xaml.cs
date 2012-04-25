@@ -33,6 +33,10 @@ namespace DataMiner
             webInteractor = new WebInteractor();
             InitializeComponent();
         }
+        private void searchBoxMouseDown(object sender, RoutedEventArgs e)
+        {
+            this.SearchBox.Text = "";
+        }
         private void searchButtonClick(object sender, RoutedEventArgs e)
         {
             string searchItem = this.SearchBox.Text;
