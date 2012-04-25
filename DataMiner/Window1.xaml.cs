@@ -16,7 +16,7 @@ using System.Windows.Shapes;
 namespace DataMiner
 {
     /// <summary>
-    /// Interaction logic for Window1.xaml
+    /// Interaction logic for Window1.xaml. Hi ANDY!
     /// </summary>
     public partial class Window1 : Window
     {
