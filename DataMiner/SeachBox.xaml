@@ -1,0 +1,15 @@
+﻿<Window x:Class="DataMiner.SeachBox"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="New Search" Height="100" Width="300">
+    <Grid>
+        <TextBlock Text="Enter Stock Symbol" HorizontalAlignment="Center"/>
+        <StackPanel>
+            <TextBox Name="SearchBox" Width="100" Height="20" MouseDown="searchBoxMouseDown" GotKeyboardFocus="searchBoxMouseDown">
+                Enter Stock Code
+            </TextBox>
+            <Button Name="SearchButton" Width="50" Height="20" Content="Search" Click="searchButtonClick" />
+        </StackPanel>
+        
+    </Grid>
+</Window>
