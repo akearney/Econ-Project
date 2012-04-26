@@ -85,6 +85,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Calculator.cs" />
     <Compile Include="DataWindow.xaml.cs">
       <DependentUpon>DataWindow.xaml</DependentUpon>
     </Compile>
@@ -104,10 +105,14 @@
     <Compile Include="SeachBox.xaml.cs">
       <DependentUpon>SeachBox.xaml</DependentUpon>
     </Compile>
+    <Compile Include="StockInfo.cs" />
+    <Compile Include="Util\Domain.cs" />
+    <Compile Include="Util\TimeType.cs" />
     <Compile Include="WebInteractor.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

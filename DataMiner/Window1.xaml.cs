@@ -41,31 +41,25 @@ namespace DataMiner
         private void searchButtonClick(object sender, RoutedEventArgs e)
         {
             string searchItem = this.SearchBox.Text;
-            string result = webInteractor.Search(searchItem);
-            Image graph = webInteractor.getYearGraph();
-            if (graph != null)
-            {
-                //this.Title.Margin = new System.Windows.Thickness(10);
-                //this.Title.Text = searchItem + " Year";
-                
-                this.Grid.Children.Remove(SearchChildren);
-                StackPanel picturePanel = new StackPanel();
+            dataWindow = new DataWindow();
+            dataWindow.Owner = this;
+            StockInfo info = new StockInfo();
 
-
-                this.Grid.Children.Add(graph);
-                dataWindow = new DataWindow();
-                dataWindow.Owner = this;
-                dataWindow.dealWithResults(searchItem);
-                this.dataWindow.Show();
-                this.Hide();
-            }
+            newSearch(searchItem, this.dataWindow);
+            this.dataWindow.Show();
+            this.Hide();
         }
 
-        public void newSearch(string searchItem)
+        public void newSearch(string searchItem, DataWindow window)
         {
             string result = webInteractor.Search(searchItem);
             Image graph = webInteractor.getYearGraph();
-            this.dataWindow.dealWithResults(searchItem);
+            StockInfo info = new StockInfo();
+            //TODO get the data and pass to calculator
+
+            //Dictionary<Util.TimeType, StockInfo> newStockInformation = Calculator.calculateAllStockInfo(new List<double>());
+            Dictionary<Util.TimeType, StockInfo> newStockInformation = new Dictionary<DataMiner.Util.TimeType, StockInfo>();
+            window.dealWithResults(searchItem, newStockInformation);
         }
     }
 }

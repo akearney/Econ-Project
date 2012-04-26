@@ -4,11 +4,11 @@
     Title="DataWindow" Height="600" Width="600">
     <Grid>
         <TabControl Name="TimeTabs" FlowDirection="RightToLeft">
-            <TabItem Header="30 Days" />
-            <TabItem Header="60 Days" />
-            <TabItem Header="1 Year" />
+            <TabItem Name="ThirtyDays" Header="30 Days" MouseUp="TimePeriodClick" />
+            <TabItem Name="SixtyDays" Header="60 Days" MouseUp="TimePeriodClick" />
+            <TabItem Name="OneYear" Header="1 Year" MouseUp="TimePeriodClick" />
         </TabControl>
-        <TabControl Name="StockSymbolTabs" TabStripPlacement="Left" Height="520">
+        <TabControl Name="StockSymbolTabs" TabStripPlacement="Left" Height="520" >
             <TabControl.Resources>
                 <Style TargetType="{x:Type TabItem}">
                     <Setter Property="Padding" Value="4" />
@@ -25,6 +25,7 @@
                     </Setter>
                 </Style>
             </TabControl.Resources>
+            
             <TabItem Header="New Search" MouseUp="newSearch">
                 <TextBlock>
                 Click on a stock symbol to view information.<LineBreak/>
