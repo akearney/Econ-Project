@@ -23,8 +23,9 @@ namespace DataMiner
         #endregion
 
         #region Constants
-        private const string URL_BASE = "http://finance.yahoo.com/q/hp?s=";
-        private const string URL_END = "+Historical+Prices";
+        private const string URL_BASE = "http://ichart.yahoo.com/table.csv?s=";
+        private const string URL_END = "&g=d&ignore=.csv";
+        private const int CLOSE_COL = 4;
 
         private const string CHART_BASE = "http://chart.finance.yahoo.com/c/1y/";
         #endregion
@@ -33,23 +34,53 @@ namespace DataMiner
         {
         }
 
-        public string Search(string search)
+        public List<double> Search(string search)
         {
             currentSearch = search;
+
+            //Get the date
+            int todayDay = System.DateTime.Now.Day;
+            int todayMonth = System.DateTime.Now.Month;
+            int todayYear = System.DateTime.Now.Year;
+
+            //Create query; note that yahoo indexes months from 0 (why???)
+            string query = currentSearch + "&a=" + (todayMonth - 1).ToString() + "&b=" + todayDay.ToString() + "&c=" + (todayYear - 1).ToString();
+            query += "&d=" + (todayMonth - 1).ToString() + "&e=" + todayDay.ToString() + "&f=" + todayYear.ToString();
+
             //Create the url for the historical prices
-            Uri url = new Uri(URL_BASE + search + URL_END);
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+            Uri url = new Uri(URL_BASE + query + URL_END);
+            WebRequest webRequest = WebRequest.Create(url);
 
-            //See the response that yahoo creates
-            WebResponse response = request.GetResponse();
+            //Debugging
+            //Console.Write(URL_BASE + query + URL_END + "\n");
 
-            StreamReader sr = new StreamReader(response.GetResponseStream(), System.Text.Encoding.UTF8);
+            //Craete stream
+            StreamReader webStream = new StreamReader(webRequest.GetResponse().GetResponseStream());
+            
+            List<double> data = new List<double>();
+            string line;
 
-            string result = sr.ReadToEnd();
-            sr.Close();
-            response.Close();
-            return result;
+            //Clear header
+            if ((line = webStream.ReadLine()) == null)
+            {
+                Console.Write("Error: file improperly formatted\n");
+            }
 
+            while ((line = webStream.ReadLine()) != null)
+            {
+                string[] entries = line.Split(',');
+                double close = double.Parse(entries[CLOSE_COL]);
+                data.Add(close);
+            }
+
+            //Debugging
+            //for (int i = 0; i < result.Count; i++)
+            //{
+            //    Console.Write(data[i].ToString() + "\n");
+            //}
+
+            webStream.Close();
+            return data;
         }
 
         public Image getYearGraph()

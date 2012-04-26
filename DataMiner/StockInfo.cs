@@ -11,8 +11,8 @@ namespace DataMiner
     {
         public Image Graph {get; set;}
         public int NumDays { get; set; }
-        public double Average { get; set; }
-        public double Stdev { get; set; }
+        public double Alpha { get; set; }
+        public double Beta { get; set; }
         public double Min { get; set; }
         public double Max { get; set; }
         public double MinNormDCGR { get; set; }

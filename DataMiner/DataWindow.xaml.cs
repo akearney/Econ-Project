@@ -136,13 +136,13 @@ namespace DataMiner
             days.Text = "Days of data: " + stockInfo.NumDays.ToString() ;
             info.Children.Add(days);
 
-            TextBlock average = new TextBlock();
-            average.Text = "Average: " + stockInfo.Average.ToString(); 
-            info.Children.Add(average);
+            TextBlock alpha = new TextBlock();
+            alpha.Text = "Alpha: " + stockInfo.Alpha.ToString(); 
+            info.Children.Add(alpha);
 
-            TextBlock std = new TextBlock();
-            std.Text = "Standard Deviation: " + stockInfo.Stdev.ToString();
-            info.Children.Add(std);
+            TextBlock beta = new TextBlock();
+            beta.Text = "Beta: " + stockInfo.Beta.ToString();
+            info.Children.Add(beta);
 
             TextBlock min = new TextBlock();
             min.Text = "Min: " + stockInfo.Min.ToString();
