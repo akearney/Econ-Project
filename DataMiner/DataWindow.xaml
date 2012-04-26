@@ -4,9 +4,9 @@
     Title="DataWindow" Height="600" Width="600">
     <Grid>
         <TabControl Name="TimeTabs" FlowDirection="RightToLeft">
-            <TabItem Name="ThirtyDays" Header="30 Days" MouseUp="TimePeriodClick" />
-            <TabItem Name="SixtyDays" Header="60 Days" MouseUp="TimePeriodClick" />
             <TabItem Name="OneYear" Header="1 Year" MouseUp="TimePeriodClick" />
+            <TabItem Name="SixtyDays" Header="60 Days" MouseUp="TimePeriodClick" />
+            <TabItem Name="ThirtyDays" Header="30 Days" MouseUp="TimePeriodClick" />
         </TabControl>
         <TabControl Name="StockSymbolTabs" TabStripPlacement="Left" Height="520" >
             <TabControl.Resources>
@@ -29,7 +29,8 @@
             <TabItem Header="New Search" MouseUp="newSearch">
                 <TextBlock>
                 Click on a stock symbol to view information.<LineBreak/>
-                You can click the time tabs in order to change the time period of data used.
+                You can click the time tabs in order to change the time period of data used.<LineBreak/>
+                Double click a tab to open it in a new window.
                 </TextBlock>
             </TabItem>
 

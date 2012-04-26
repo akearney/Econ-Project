@@ -28,7 +28,7 @@ namespace DataMiner
         public DataWindow()
         {
             stockInformation = new Dictionary<string, Dictionary<DataMiner.Util.TimeType, StockInfo>>();
-            currentTime = Util.Domain.THIRTY_DAYS;
+            currentTime = Util.Domain.ONE_YEAR;
             InitializeComponent();
         }
 
@@ -91,9 +91,7 @@ namespace DataMiner
             }
             finally
             {
-                StockInfo currentInfo;
-                results.TryGetValue(currentTime, out currentInfo);
-                TabItem newTab = createTab(stockCall, currentInfo);
+                TabItem newTab = createTab(stockCall);
                 //UpdateContent
                 this.StockSymbolTabs.Items.Add(newTab);
                 this.StockSymbolTabs.SelectedIndex = this.StockSymbolTabs.Items.Count - 1;
@@ -102,15 +100,11 @@ namespace DataMiner
 
         }
 
-        public TabItem createTab(string stockCall, StockInfo stockInfo)
+        public TabItem createTab(string stockCall)
         {
             TabItem newTab = new TabItem();
-            StackPanel info = new StackPanel();
-            TextBlock name = new TextBlock();
-            name.Text = stockCall + " 1";
-            info.Children.Add(name);
             newTab.Header = stockCall;
-            newTab.Content = info;
+            updateTab(newTab, currentTime);
             newTab.MouseUp += new MouseButtonEventHandler(ChangeStock);
             newTab.MouseDoubleClick += new MouseButtonEventHandler(newWindow);
             return newTab;
@@ -118,11 +112,56 @@ namespace DataMiner
         }
         private void updateTab(TabItem currentTab, Util.TimeType time)
         {
+            //Get the corresponding data, which is already stored
+            StockInfo stockInfo = stockInformation[currentTab.Header.ToString()][time];
+
+            //The border surrounds the stackpanel
+            Border myBorder = new Border();
+            //myBorder.Width = 200;
+            myBorder.HorizontalAlignment = HorizontalAlignment.Center;
+            myBorder.VerticalAlignment = VerticalAlignment.Center;
+            myBorder.Background = Brushes.SkyBlue;
+            myBorder.BorderBrush = Brushes.Black;
+            myBorder.BorderThickness = new Thickness(1);
+
+            //Creating the stackpanel to store the information
             StackPanel info = new StackPanel();
+
+            //Things added to the stack panel
             TextBlock name = new TextBlock();
-            name.Text = currentTab.Name + " " + time.MyType;
+            name.Text = currentTab.Header.ToString();
             info.Children.Add(name);
-            currentTab.Content = info;
+
+            TextBlock days = new TextBlock();
+            days.Text = "Days of data: " + stockInfo.NumDays.ToString() ;
+            info.Children.Add(days);
+
+            TextBlock average = new TextBlock();
+            average.Text = "Average: " + stockInfo.Average.ToString(); 
+            info.Children.Add(average);
+
+            TextBlock std = new TextBlock();
+            std.Text = "Standard Deviation: " + stockInfo.Stdev.ToString();
+            info.Children.Add(std);
+
+            TextBlock min = new TextBlock();
+            min.Text = "Min: " + stockInfo.Min.ToString();
+            info.Children.Add(min);
+
+            TextBlock max = new TextBlock();
+            max.Text = "Max: " + stockInfo.Max.ToString();
+            info.Children.Add(max);
+
+            TextBlock MinNorm = new TextBlock();
+            MinNorm.Text = "Min Norm DCGR: " + stockInfo.MinNormDCGR.ToString();
+            info.Children.Add(MinNorm);
+
+            TextBlock MaxNorm = new TextBlock();
+            MaxNorm.Text = "Max Norm DCGR: " + stockInfo.MaxNormDCGR.ToString();
+            info.Children.Add(MaxNorm);
+
+            myBorder.Child = info;
+            currentTab.Content = myBorder;
 
         }
 
