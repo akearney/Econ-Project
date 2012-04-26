@@ -18,6 +18,10 @@ namespace DataMiner
     /// </summary>
     public partial class DataWindow : Window
     {
+        #region Constants
+        private const int SIGFIG = 2;
+        #endregion
+
         //This dictionary is basically ALL of the data loaded in
         // It maps from stock symbol to a dictionary of
         // The time periods to the stock information
@@ -129,7 +133,7 @@ namespace DataMiner
 
             //Things added to the stack panel
             TextBlock name = new TextBlock();
-            name.Text = currentTab.Header.ToString();
+            name.Text = currentTab.Header.ToString().ToUpper();
             info.Children.Add(name);
 
             TextBlock days = new TextBlock();
@@ -137,27 +141,27 @@ namespace DataMiner
             info.Children.Add(days);
 
             TextBlock alpha = new TextBlock();
-            alpha.Text = "Alpha: " + stockInfo.Alpha.ToString(); 
+            alpha.Text = "Alpha: " + Math.Round(stockInfo.Alpha, SIGFIG).ToString(); 
             info.Children.Add(alpha);
 
             TextBlock beta = new TextBlock();
-            beta.Text = "Beta: " + stockInfo.Beta.ToString();
+            beta.Text = "Beta: " + Math.Round(stockInfo.Beta, SIGFIG).ToString();
             info.Children.Add(beta);
 
             TextBlock min = new TextBlock();
-            min.Text = "Min: " + stockInfo.Min.ToString();
+            min.Text = "Min: " + Math.Round(stockInfo.Min, SIGFIG).ToString();
             info.Children.Add(min);
 
             TextBlock max = new TextBlock();
-            max.Text = "Max: " + stockInfo.Max.ToString();
+            max.Text = "Max: " + Math.Round(stockInfo.Max, SIGFIG).ToString();
             info.Children.Add(max);
 
             TextBlock MinNorm = new TextBlock();
-            MinNorm.Text = "Min Norm DCGR: " + stockInfo.MinNormDCGR.ToString();
+            MinNorm.Text = "Min Norm DCGR: " + Math.Round(stockInfo.MinNormDCGR, SIGFIG).ToString();
             info.Children.Add(MinNorm);
 
             TextBlock MaxNorm = new TextBlock();
-            MaxNorm.Text = "Max Norm DCGR: " + stockInfo.MaxNormDCGR.ToString();
+            MaxNorm.Text = "Max Norm DCGR: " + Math.Round(stockInfo.MaxNormDCGR, SIGFIG).ToString();
             info.Children.Add(MaxNorm);
 
             myBorder.Child = info;

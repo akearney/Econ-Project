@@ -24,6 +24,8 @@ namespace DataMiner
 
         #region Constants
         private const string URL_BASE = "http://ichart.yahoo.com/table.csv?s=";
+        private const string URL_FROM_DATE = "&a={0}&b={1}&c={2}";
+        private const string URL_TO_DATE = "&d={0}&e={1}&f={2}";
         private const string URL_END = "&g=d&ignore=.csv";
         private const int CLOSE_COL = 4;
 
@@ -44,8 +46,9 @@ namespace DataMiner
             int todayYear = System.DateTime.Now.Year;
 
             //Create query; note that yahoo indexes months from 0 (why???)
-            string query = currentSearch + "&a=" + (todayMonth - 1).ToString() + "&b=" + todayDay.ToString() + "&c=" + (todayYear - 1).ToString();
-            query += "&d=" + (todayMonth - 1).ToString() + "&e=" + todayDay.ToString() + "&f=" + todayYear.ToString();
+            string query = currentSearch;
+            query += String.Format(URL_FROM_DATE, todayMonth - 1, todayDay.ToString(), todayYear - 1);
+            query += String.Format(URL_TO_DATE, todayMonth - 1, todayDay.ToString(), todayYear);
 
             //Create the url for the historical prices
             Uri url = new Uri(URL_BASE + query + URL_END);

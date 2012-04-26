@@ -29,13 +29,14 @@ namespace DataMiner
             StockInfo results = new StockInfo();
             //Calcuating DCGR yields 1 less observation
             results.NumDays = data.Count + 1;
-            results.Alpha = Math.Round(data.Average(), 4);
-            results.Beta = Math.Round(StandardDeviation(data, results.Alpha), 4);
+            results.Alpha = data.Average();
+            results.Beta = StandardDeviation(data, results.Alpha);
             results.Max = data.Max();
             results.Min = data.Min();
+
             List<double> NormDCGR = NormalizedDailyContGrowthRate(data, results.Alpha, results.Beta);
-            results.MaxNormDCGR = Math.Round(NormDCGR.Max(), 4);
-            results.MinNormDCGR = Math.Round(NormDCGR.Min(), 4);
+            results.MaxNormDCGR = NormDCGR.Max();
+            results.MinNormDCGR = NormDCGR.Min();
 
             return results;
         }
