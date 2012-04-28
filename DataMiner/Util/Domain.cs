@@ -21,6 +21,8 @@ namespace DataMiner.Util
         public static TimeType SIXY_DAYS = new TimeType(_sixtydays);
         public static TimeType ONE_YEAR = new TimeType(_oneyear);
 
+        public static List<TimeType> TIMES = new List<TimeType>() { THIRTY_DAYS, SIXY_DAYS, ONE_YEAR };
+
         public static TimeType getTime(TabItem clicked)
         {
             switch (clicked.Name)

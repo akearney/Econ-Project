@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
-using System.Text;
 using System.Windows.Controls;
+using System.Windows.Media.Imaging;
+using System.Text;
+using System.Drawing;
 using System.Media;
 
 using System.Net;
@@ -18,8 +20,9 @@ namespace DataMiner
         #endregion
 
         #region Locals
-        private byte[] downloadedData;
+        //private byte[] downloadedData;
         private string currentSearch;
+        private Dictionary<Util.TimeType, string> timeFilter = new Dictionary<DataMiner.Util.TimeType, string>();
         #endregion
 
         #region Constants
@@ -29,11 +32,16 @@ namespace DataMiner
         private const string URL_END = "&g=d&ignore=.csv";
         private const int CLOSE_COL = 4;
 
-        private const string CHART_BASE = "http://chart.finance.yahoo.com/c/1y/";
+        private const string CHART_BASE = "http://ichart.yahoo.com/z?s=";
+        private const string CHART_TIME = "&t=";
         #endregion
+
 
         public WebInteractor()
         {
+            timeFilter.Add(Util.Domain.ONE_YEAR, "1y");
+            timeFilter.Add(Util.Domain.SIXY_DAYS, "2m");
+            timeFilter.Add(Util.Domain.THIRTY_DAYS, "1m");
         }
 
         public List<double> Search(string search)
@@ -86,19 +94,32 @@ namespace DataMiner
             return data;
         }
 
-        public Image getYearGraph()
+        public System.Windows.Controls.Image getGraph(Util.TimeType duration)
         {
             if (currentSearch == null)
                 return null;
             try
             {
-                Uri url = new Uri(CHART_BASE + currentSearch);
+                string query = currentSearch + CHART_TIME;
+                query += timeFilter[duration];
+
+                Uri url = new Uri(CHART_BASE + query);
+                Console.Write(CHART_BASE + query);
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
 
                 //See the response that yahoo creates
                 WebResponse response = request.GetResponse();
 
                 Stream sr = response.GetResponseStream();
+                System.Drawing.Image chart = System.Drawing.Image.FromStream(sr);
+
+                //Debugging
+                //chart.Save("h:\\chartTest" + query + ".bmp");
+             
+                sr.Close();
+                return convertDrawingImgToWindowImg(chart);
+                
+                /***
                 //Download in chuncks
                 byte[] buffer = new byte[1024];
 
@@ -132,14 +153,35 @@ namespace DataMiner
                 Image myImage = new Image();
                 myImage.Source = bitmapSource;
                 myImage.Margin = new Thickness(20);
+
       
                 return myImage;
+                ***/
+
             }
             catch (Exception)
             {
                 MessageBox.Show("Error downloading the graph");
                 return null;
             }
+        }
+
+        private System.Windows.Controls.Image convertDrawingImgToWindowImg(System.Drawing.Image source)
+        {
+            // referenced from: http://rohitagarwal24.blogspot.com/2011/04/convert-from-systemdrawingimage-to.html
+            // haven't tested
+            System.Windows.Controls.Image dst = new System.Windows.Controls.Image();
+            System.Drawing.Bitmap bmp = new System.Drawing.Bitmap(source);
+
+            IntPtr hBitMap = bmp.GetHbitmap();
+            System.Windows.Media.ImageSource windowBMP =
+                System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(hBitMap, IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+
+            dst.Source = windowBMP;
+            dst.Height = 287;
+            dst.Width = 510; // Yay magic numbers!
+
+            return dst;
         }
 
     }

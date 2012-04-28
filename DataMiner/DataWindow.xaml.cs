@@ -185,8 +185,6 @@ namespace DataMiner
                 this.StockSymbolTabs.Items.Add(newTab);
                 this.StockSymbolTabs.SelectedIndex = this.StockSymbolTabs.Items.Count - 1;
             }
-
-
         }
 
         public TabItem createTab(string stockCall)

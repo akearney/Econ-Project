@@ -79,7 +79,43 @@ namespace DataMiner
                 NormDCGR.Add((DCGR[i] - avg)/stdev);
             }
             return NormDCGR;
+        }
 
+        public static double probabilityCalculator(double spotPrice, double strikePrice, double alpha, double beta, int dtm)
+        {
+            double growthRateToStrike = Math.Log(spotPrice - strikePrice);
+            double timeAdjBeta = beta * Math.Sqrt(dtm);
+
+            return cumNormDist(growthRateToStrike, alpha, timeAdjBeta);
+        }
+
+        private static double cumNormDist(double value, double mean, double stdDev)
+        {
+            double zValue = (value - mean) / stdDev;
+            return stdCumNormDist(zValue);
+        }
+
+        private static double stdCumNormDist(double value)
+        {
+            // taken from: http://www.johndcook.com/csharp_phi.html
+            // completely and utterly untested
+
+            double a1 = 0.254829592;
+            double a2 = -0.284496736;
+            double a3 = 1.421413741;
+            double a4 = -1.453152027;
+            double a5 = 1.061405429;
+            double p = 0.3275911;
+
+            int sign = 1;
+            if (value < 0)
+                sign = -1;
+            value = Math.Abs(value) / Math.Sqrt(2.0);
+
+            double t = 1.0 / (1.0 + p * value);
+            double y = 1.0 - (((((a5 * t + a4) * t) + a3) * t + a2) * t + a1) * t * Math.Exp(-value * value);
+
+            return 0.5 * (1.0 + sign * y);
         }
     }
 }

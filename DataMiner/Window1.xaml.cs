@@ -55,13 +55,20 @@ namespace DataMiner
         public void newSearch(string searchItem, DataWindow window)
         {
             List<double> data = webInteractor.Search(searchItem);
-            Image graph = webInteractor.getYearGraph();
+            List<Image> charts = new List<Image>();
+
+            foreach (Util.TimeType time in Util.Domain.TIMES)
+            {
+                charts.Add(webInteractor.getGraph(time));
+            }
+
             StockInfo info = new StockInfo();
             Dictionary<Util.TimeType, StockInfo> newStockInformation = Calculator.calculateAllStockInfo(data);
             //Dictionary<Util.TimeType, StockInfo> newStockInformation = new Dictionary<DataMiner.Util.TimeType, StockInfo>();
             window.dealWithResults(searchItem, newStockInformation);
             numWindows++;
         }
+
         public void end()
         {
             this.Close();
