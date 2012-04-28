@@ -28,20 +28,28 @@ namespace DataMiner
         private Dictionary<string, Dictionary<Util.TimeType, StockInfo>> stockInformation;
         private Util.TimeType currentTime;
 
+        private List<UIElement> hasEvents;
+        private SeachBox searchBoxOpen;
+
 
         public DataWindow()
         {
             stockInformation = new Dictionary<string, Dictionary<DataMiner.Util.TimeType, StockInfo>>();
             currentTime = Util.Domain.ONE_YEAR;
+            hasEvents = new List<UIElement>();
             InitializeComponent();
         }
 
         #region Events
-        private void WindowClosing(object sender, RoutedEventArgs e)
+        protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
         {
-            if (this.Owner.OwnedWindows.Count == 1)
-                this.Owner.Close();
+            ((Window1)this.Owner).numWindows--;
+            if (((Window1)this.Owner).numWindows == 0)
+            {
+                ((Window1)this.Owner).end();
+            }
         }
+
         private void TimePeriodClick(object sender, RoutedEventArgs e)
         {
             TabItem clicked = sender as TabItem;
@@ -57,11 +65,28 @@ namespace DataMiner
         {
             updateTab(sender as TabItem, currentTime);
         }
-        private void newWindow(object sender, RoutedEventArgs e)
+        //Warning event fires wherever you click on the page of a tab
+        private void newWindow(object sender, MouseButtonEventArgs e)
         {
             TabItem currentClick = sender as TabItem;
+
+            //This point stuff is so that the new window is only triggered near the ACTUAL tab
+            GeneralTransform transform = currentClick.TransformToAncestor(this);
+            Point rootPoint = transform.Transform(new Point(0, 0));
+            Point tabClick = e.GetPosition(this);
+
+            if (Math.Abs(rootPoint.X - tabClick.X) > 20)
+                return;
+            //Clean up dynamically assigned events, so they are not triggered for this window
             currentClick.MouseUp -= ChangeStock;
             currentClick.MouseDoubleClick -= newWindow;
+            foreach (UIElement elem in hasEvents)
+            {
+                if ( (string)((TextBox)elem).Tag == currentClick.Header.ToString().ToUpper())
+                {
+                    ((TextBox)elem).MouseDown -= price_MouseDown;
+                }
+            }
             this.StockSymbolTabs.Items.Remove(currentClick);
             Dictionary<Util.TimeType, StockInfo> storedInfo = stockInformation[currentClick.Header.ToString()];
             DataWindow newWin = new DataWindow();
@@ -72,14 +97,24 @@ namespace DataMiner
 
         private void newSearch(object sender, RoutedEventArgs e)
         {
+            if (searchBoxOpen != null)
+            {
+                searchBoxOpen.Close();
+            }
             SeachBox search = new SeachBox();
             search.Owner = this;
+            searchBoxOpen = search;
             search.Show();
+
             
         }
         public void Search(string stockSymbol)
         {
             ((Window1)this.Owner).newSearch(stockSymbol, this);
+        }
+        private void price_MouseDown(object sender, RoutedEventArgs e)
+        {
+            ((TextBox)sender).Text = "";
         }
         #endregion
 
@@ -129,19 +164,107 @@ namespace DataMiner
             myBorder.BorderThickness = new Thickness(1);
 
             //Creating the stackpanel to store the information
+            StackPanel content = new StackPanel();
+            StackPanel info = createStockInfo(currentTab, stockInfo);
+            DockPanel option = createOptionInfo(currentTab);
+            content.Children.Add(info);
+            content.Children.Add(option);
+
+            myBorder.Child = content;
+            currentTab.Content = myBorder;
+
+
+        }
+        private DockPanel createOptionInfo(TabItem currentTab)
+        {
+            DockPanel info = new DockPanel();
+            info.Name = "Options";
+            info.Margin = new Thickness(10);
+           
+            TextBlock name = new TextBlock();
+            name.Text = "Option";
+            name.HorizontalAlignment = HorizontalAlignment.Center;
+            DockPanel.SetDock(name, Dock.Top);
+            name.FontWeight = FontWeights.Bold;            
+            info.Children.Add(name);
+
+            #region text for options
+
+            StackPanel text = new StackPanel();
+            DockPanel.SetDock(text, Dock.Left);
+            TextBlock description = new TextBlock();
+            description.Text = "Call Option Strike Price";
+            description.HorizontalAlignment = HorizontalAlignment.Right;
+            description.Margin = new Thickness(2);
+
+            TextBlock price = new TextBlock();
+            price.Text = "Call Option Price";
+            price.HorizontalAlignment = HorizontalAlignment.Right;
+            price.Margin = new Thickness(2);
+
+            TextBlock days = new TextBlock();
+            days.Text = "Days To Expiration";
+            days.HorizontalAlignment = HorizontalAlignment.Right;
+            days.Margin = new Thickness(2);
+
+            text.Children.Add(description);
+            text.Children.Add(price);
+            text.Children.Add(days);
+            #endregion
+
+            #region input boxes
+
+            StackPanel boxes = new StackPanel();
+
+            DockPanel.SetDock(boxes, Dock.Right);
+            TextBox strikebox = new TextBox();
+            strikebox.Text = "Enter Price";
+            strikebox.Tag = currentTab.Header.ToString().ToUpper();
+            hasEvents.Add(strikebox);
+            strikebox.MouseUp += new MouseButtonEventHandler(price_MouseDown);
+
+            TextBox pricebox = new TextBox();
+            pricebox.Text = "Enter Price";
+            pricebox.Tag = currentTab.Header.ToString().ToUpper();
+            hasEvents.Add(pricebox);
+            pricebox.MouseEnter += new MouseEventHandler(price_MouseDown);
+
+            TextBox daysbox = new TextBox();
+            daysbox.Text = "Enter Days";
+            daysbox.Tag = currentTab.Header.ToString().ToUpper();
+            hasEvents.Add(daysbox);
+            daysbox.MouseUp += new MouseButtonEventHandler(price_MouseDown);
+
+            boxes.Children.Add(strikebox);
+            boxes.Children.Add(pricebox);
+            boxes.Children.Add(daysbox);
+
+            #endregion
+
+
+            info.Children.Add(text);
+            info.Children.Add(boxes);
+
+            return info;
+            
+        }
+        private StackPanel createStockInfo(TabItem currentTab, StockInfo stockInfo)
+        {
+            //Creating the stackpanel to store the information
             StackPanel info = new StackPanel();
 
             //Things added to the stack panel
             TextBlock name = new TextBlock();
             name.Text = currentTab.Header.ToString().ToUpper();
+            name.FontWeight = FontWeights.Bold;
             info.Children.Add(name);
 
             TextBlock days = new TextBlock();
-            days.Text = "Days of data: " + stockInfo.NumDays.ToString() ;
+            days.Text = "Days of data: " + stockInfo.NumDays.ToString();
             info.Children.Add(days);
 
             TextBlock alpha = new TextBlock();
-            alpha.Text = "Alpha: " + Math.Round(stockInfo.Alpha, SIGFIG).ToString(); 
+            alpha.Text = "Alpha: " + Math.Round(stockInfo.Alpha, SIGFIG).ToString();
             info.Children.Add(alpha);
 
             TextBlock beta = new TextBlock();
@@ -164,12 +287,20 @@ namespace DataMiner
             MaxNorm.Text = "Max Norm DCGR: " + Math.Round(stockInfo.MaxNormDCGR, SIGFIG).ToString();
             info.Children.Add(MaxNorm);
 
-            myBorder.Child = info;
-            currentTab.Content = myBorder;
-
+            return info;
         }
 
         private void Window_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+
+        }
+
+        private void Window_Closed(object sender, EventArgs e)
+        {
+
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
 
         }
