@@ -31,6 +31,12 @@ namespace DataMiner
         private List<UIElement> hasEvents;
         private SeachBox searchBoxOpen;
 
+        //Information for calculating the probability stuff
+        private double strikePrice;
+        private double optionPrice;
+        private int daysToExperation;
+
+
 
         public DataWindow()
         {
@@ -43,10 +49,12 @@ namespace DataMiner
         #region Events
         protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
         {
-            ((Window1)this.Owner).numWindows--;
-            if (((Window1)this.Owner).numWindows == 0)
+            Window1 window = ((Window1)this.Owner);
+            window.numWindows--;
+            if (window.numWindows == 0)
             {
-                ((Window1)this.Owner).end();
+                this.Owner = null;
+                window.end();
             }
         }
 
@@ -78,7 +86,6 @@ namespace DataMiner
             if (Math.Abs(rootPoint.X - tabClick.X) > 20)
                 return;
             //Clean up dynamically assigned events, so they are not triggered for this window
-            currentClick.MouseUp -= ChangeStock;
             currentClick.MouseDoubleClick -= newWindow;
             foreach (UIElement elem in hasEvents)
             {
@@ -112,6 +119,49 @@ namespace DataMiner
         {
             ((Window1)this.Owner).newSearch(stockSymbol, this);
         }
+        private void setStrikePrice(object sender, RoutedEventArgs e)
+        {
+            TextBox box = sender as TextBox;
+            if (box.Text == "")
+                return;
+            double data;
+            if (double.TryParse(box.Text, out data))
+                strikePrice = data;
+            else
+            {
+                MessageBox.Show("You can only enter numbers here");
+                box.Text = box.Text.Substring(0,box.Text.Length - 1);
+                box.Select(box.Text.Length, 0);
+            }
+
+        }
+        private void setOptionPrice(object sender, RoutedEventArgs e)
+        {
+            TextBox box = sender as TextBox;
+            double data;
+            if (double.TryParse(box.Text, out data))
+                optionPrice = data;
+            else
+            {
+                MessageBox.Show("You can only enter numbers here");
+                box.Text = box.Text.Substring(0,box.Text.Length - 1);
+                box.Select(box.Text.Length, 0);
+            }
+        }
+        private void setDaysLeft(object sender, RoutedEventArgs e)
+        {
+            TextBox box = sender as TextBox;
+            int data;
+            if (int.TryParse(box.Text, out data))
+                optionPrice = data;
+            else
+            {
+                MessageBox.Show("You can only enter integers here");
+                box.Text = box.Text.Substring(0,box.Text.Length - 1);
+                box.Select(box.Text.Length, 0);
+            }
+
+        }
         private void price_MouseDown(object sender, RoutedEventArgs e)
         {
             ((TextBox)sender).Text = "";
@@ -144,7 +194,6 @@ namespace DataMiner
             TabItem newTab = new TabItem();
             newTab.Header = stockCall;
             updateTab(newTab, currentTime);
-            newTab.MouseUp += new MouseButtonEventHandler(ChangeStock);
             newTab.MouseDoubleClick += new MouseButtonEventHandler(newWindow);
             return newTab;
 
@@ -165,7 +214,7 @@ namespace DataMiner
 
             //Creating the stackpanel to store the information
             StackPanel content = new StackPanel();
-            StackPanel info = createStockInfo(currentTab, stockInfo);
+            DockPanel info = createStockInfo(currentTab, stockInfo);
             DockPanel option = createOptionInfo(currentTab);
             content.Children.Add(info);
             content.Children.Add(option);
@@ -218,21 +267,24 @@ namespace DataMiner
 
             DockPanel.SetDock(boxes, Dock.Right);
             TextBox strikebox = new TextBox();
-            strikebox.Text = "Enter Price";
+            strikebox.MinWidth = 80;
+            //strikebox.Text = "Enter Price";
             strikebox.Tag = currentTab.Header.ToString().ToUpper();
             hasEvents.Add(strikebox);
-            strikebox.MouseUp += new MouseButtonEventHandler(price_MouseDown);
+            strikebox.KeyUp += new KeyEventHandler(setStrikePrice);
 
             TextBox pricebox = new TextBox();
-            pricebox.Text = "Enter Price";
+            //pricebox.Text = "Enter Price";
             pricebox.Tag = currentTab.Header.ToString().ToUpper();
             hasEvents.Add(pricebox);
-            pricebox.MouseEnter += new MouseEventHandler(price_MouseDown);
+            pricebox.KeyUp += new KeyEventHandler(setOptionPrice);
+            pricebox.PreviewMouseUp += new MouseButtonEventHandler(price_MouseDown);
 
             TextBox daysbox = new TextBox();
-            daysbox.Text = "Enter Days";
+            //daysbox.Text = "Enter Days";
             daysbox.Tag = currentTab.Header.ToString().ToUpper();
             hasEvents.Add(daysbox);
+            daysbox.KeyUp += new KeyEventHandler(setDaysLeft);
             daysbox.MouseUp += new MouseButtonEventHandler(price_MouseDown);
 
             boxes.Children.Add(strikebox);
@@ -248,46 +300,89 @@ namespace DataMiner
             return info;
             
         }
-        private StackPanel createStockInfo(TabItem currentTab, StockInfo stockInfo)
+        private DockPanel createStockInfo(TabItem currentTab, StockInfo stockInfo)
         {
+            DockPanel stockinfo = new DockPanel();
             //Creating the stackpanel to store the information
             StackPanel info = new StackPanel();
+            DockPanel.SetDock(info, Dock.Right);
+            StackPanel data = new StackPanel();
+            DockPanel.SetDock(info, Dock.Left);
 
             //Things added to the stack panel
             TextBlock name = new TextBlock();
             name.Text = currentTab.Header.ToString().ToUpper();
             name.FontWeight = FontWeights.Bold;
-            info.Children.Add(name);
+            DockPanel.SetDock(name, Dock.Top);
+            stockinfo.Children.Add(name);
 
             TextBlock days = new TextBlock();
-            days.Text = "Days of data: " + stockInfo.NumDays.ToString();
+            days.Text = "Days of data: ";
+            days.HorizontalAlignment = HorizontalAlignment.Right;
+            TextBlock daysdata = new TextBlock();
+            daysdata.Text = stockInfo.NumDays.ToString();
+            daysdata.HorizontalAlignment = HorizontalAlignment.Left;
             info.Children.Add(days);
+            data.Children.Add(daysdata);
 
             TextBlock alpha = new TextBlock();
-            alpha.Text = "Alpha: " + Math.Round(stockInfo.Alpha, SIGFIG).ToString();
+            alpha.Text = "Alpha: ";
+            alpha.HorizontalAlignment = HorizontalAlignment.Right;
+            TextBlock alphadata = new TextBlock();
+            alphadata.Text = Math.Round(stockInfo.Alpha, SIGFIG).ToString();
+            alphadata.HorizontalAlignment = HorizontalAlignment.Left;
             info.Children.Add(alpha);
+            data.Children.Add(alphadata);
 
             TextBlock beta = new TextBlock();
-            beta.Text = "Beta: " + Math.Round(stockInfo.Beta, SIGFIG).ToString();
+            beta.Text = "Beta: ";
+            beta.HorizontalAlignment = HorizontalAlignment.Right;
+            TextBlock betadata = new TextBlock();
+            betadata.Text = Math.Round(stockInfo.Beta, SIGFIG).ToString();
+            betadata.HorizontalAlignment = HorizontalAlignment.Left;
             info.Children.Add(beta);
+            data.Children.Add(betadata);
 
             TextBlock min = new TextBlock();
-            min.Text = "Min: " + Math.Round(stockInfo.Min, SIGFIG).ToString();
+            min.Text = "Min: ";
+            min.HorizontalAlignment = HorizontalAlignment.Right;
+            TextBlock mindata = new TextBlock();
+            mindata.Text = Math.Round(stockInfo.Min, SIGFIG).ToString();
+            mindata.HorizontalAlignment = HorizontalAlignment.Left;
             info.Children.Add(min);
+            data.Children.Add(mindata);
 
             TextBlock max = new TextBlock();
-            max.Text = "Max: " + Math.Round(stockInfo.Max, SIGFIG).ToString();
+            max.Text = "Max: ";
+            max.HorizontalAlignment = HorizontalAlignment.Right;
+            TextBlock maxdata = new TextBlock();
+            maxdata.Text = Math.Round(stockInfo.Max, SIGFIG).ToString();
+            maxdata.HorizontalAlignment = HorizontalAlignment.Left;
             info.Children.Add(max);
+            data.Children.Add(maxdata);
 
             TextBlock MinNorm = new TextBlock();
-            MinNorm.Text = "Min Norm DCGR: " + Math.Round(stockInfo.MinNormDCGR, SIGFIG).ToString();
+            MinNorm.Text = "Min Norm DCGR: ";
+            MinNorm.HorizontalAlignment = HorizontalAlignment.Right;
+            TextBlock MinNormdata = new TextBlock();
+            MinNormdata.Text = Math.Round(stockInfo.MinNormDCGR, SIGFIG).ToString();
+            MinNormdata.HorizontalAlignment = HorizontalAlignment.Left;
             info.Children.Add(MinNorm);
+            data.Children.Add(MinNormdata);
 
             TextBlock MaxNorm = new TextBlock();
-            MaxNorm.Text = "Max Norm DCGR: " + Math.Round(stockInfo.MaxNormDCGR, SIGFIG).ToString();
+            MaxNorm.Text = "Max Norm DCGR: ";
+            MaxNorm.HorizontalAlignment = HorizontalAlignment.Right;
+            TextBlock MaxNormdata = new TextBlock();
+            MaxNormdata.Text = Math.Round(stockInfo.MaxNormDCGR, SIGFIG).ToString();
+            MaxNormdata.HorizontalAlignment = HorizontalAlignment.Left;
             info.Children.Add(MaxNorm);
+            data.Children.Add(MaxNormdata);
 
-            return info;
+            stockinfo.Children.Add(info);
+            stockinfo.Children.Add(data);
+
+            return stockinfo;
         }
 
         private void Window_MouseUp(object sender, MouseButtonEventArgs e)
