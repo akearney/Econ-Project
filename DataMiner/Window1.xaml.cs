@@ -24,6 +24,7 @@ namespace DataMiner
         //Handles all of the we requesting
         private WebInteractor webInteractor;
         private DataWindow dataWindow;
+        public int numWindows;
         #endregion
 
         #region Constants
@@ -31,6 +32,7 @@ namespace DataMiner
         #endregion
         public Window1()
         {
+            numWindows = 0;
             webInteractor = new WebInteractor();
             InitializeComponent();
         }
@@ -58,6 +60,11 @@ namespace DataMiner
             Dictionary<Util.TimeType, StockInfo> newStockInformation = Calculator.calculateAllStockInfo(data);
             //Dictionary<Util.TimeType, StockInfo> newStockInformation = new Dictionary<DataMiner.Util.TimeType, StockInfo>();
             window.dealWithResults(searchItem, newStockInformation);
+            numWindows++;
+        }
+        public void end()
+        {
+            this.Close();
         }
     }
 }
