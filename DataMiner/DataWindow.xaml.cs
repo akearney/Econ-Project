@@ -27,6 +27,7 @@ namespace DataMiner
         // The time periods to the stock information
         private Dictionary<string, Dictionary<Util.TimeType, StockInfo>> stockInformation;
         private Util.TimeType currentTime;
+        private string currentStock;
 
         private List<UIElement> hasEvents;
         private SeachBox searchBoxOpen;
@@ -35,6 +36,8 @@ namespace DataMiner
         private double strikePrice;
         private double optionPrice;
         private int daysToExperation;
+        TextBlock probdata;
+        private const int NOTSET = -1;
 
 
 
@@ -42,6 +45,9 @@ namespace DataMiner
         {
             stockInformation = new Dictionary<string, Dictionary<DataMiner.Util.TimeType, StockInfo>>();
             currentTime = Util.Domain.ONE_YEAR;
+            strikePrice = NOTSET;
+            optionPrice = NOTSET;
+            daysToExperation = NOTSET;
             hasEvents = new List<UIElement>();
             InitializeComponent();
         }
@@ -133,6 +139,7 @@ namespace DataMiner
                 box.Text = box.Text.Substring(0,box.Text.Length - 1);
                 box.Select(box.Text.Length, 0);
             }
+            updateProbability();
 
         }
         private void setOptionPrice(object sender, RoutedEventArgs e)
@@ -147,19 +154,21 @@ namespace DataMiner
                 box.Text = box.Text.Substring(0,box.Text.Length - 1);
                 box.Select(box.Text.Length, 0);
             }
+            updateProbability();
         }
         private void setDaysLeft(object sender, RoutedEventArgs e)
         {
             TextBox box = sender as TextBox;
             int data;
             if (int.TryParse(box.Text, out data))
-                optionPrice = data;
+                daysToExperation = data;
             else
             {
                 MessageBox.Show("You can only enter integers here");
                 box.Text = box.Text.Substring(0,box.Text.Length - 1);
                 box.Select(box.Text.Length, 0);
             }
+            updateProbability();
 
         }
         private void price_MouseDown(object sender, RoutedEventArgs e)
@@ -187,6 +196,18 @@ namespace DataMiner
             }
         }
 
+        private void updateProbability()
+        {
+            if (daysToExperation == NOTSET || strikePrice == NOTSET || optionPrice == NOTSET)
+                return;
+            else
+            {
+                StockInfo info = stockInformation[currentStock][currentTime];
+                double prob = Calculator.probabilityCalculator(info.SpotPrice, strikePrice, info.Alpha, info.Beta, daysToExperation);
+                probdata.Text = Math.Round(prob, SIGFIG).ToString();
+            }
+        }
+
         public TabItem createTab(string stockCall)
         {
             TabItem newTab = new TabItem();
@@ -196,11 +217,27 @@ namespace DataMiner
             return newTab;
 
         }
+
+        private void removeGraphAsChild()
+        {
+            try
+            {
+                ((DockPanel)stockInformation[currentStock][currentTime].Graph.Parent).Children.Remove(stockInformation[currentStock][currentTime].Graph);
+
+            }
+            catch
+            { }
+        }
+
         private void updateTab(TabItem currentTab, Util.TimeType time)
         {
+            DockPanel tab = new DockPanel();
             //Get the corresponding data, which is already stored
-            StockInfo stockInfo = stockInformation[currentTab.Header.ToString()][time];
+            removeGraphAsChild();
 
+            #region stockinfo
+            StockInfo stockInfo = stockInformation[currentTab.Header.ToString()][time];
+            currentStock = currentTab.Header.ToString();
             //The border surrounds the stackpanel
             Border myBorder = new Border();
             //myBorder.Width = 200;
@@ -218,7 +255,13 @@ namespace DataMiner
             content.Children.Add(option);
 
             myBorder.Child = content;
-            currentTab.Content = myBorder;
+            #endregion
+
+            DockPanel.SetDock(stockInfo.Graph, Dock.Top);
+            DockPanel.SetDock(myBorder, Dock.Bottom);
+            tab.Children.Add(stockInfo.Graph);
+            tab.Children.Add(myBorder);
+            currentTab.Content = tab;
 
 
         }
@@ -254,9 +297,15 @@ namespace DataMiner
             days.HorizontalAlignment = HorizontalAlignment.Right;
             days.Margin = new Thickness(2);
 
+            TextBlock prob = new TextBlock();
+            prob.Text = "Probability: ";
+            prob.HorizontalAlignment = HorizontalAlignment.Right;
+            prob.Margin = new Thickness(2);
+
             text.Children.Add(description);
             text.Children.Add(price);
             text.Children.Add(days);
+            text.Children.Add(prob);
             #endregion
 
             #region input boxes
@@ -276,18 +325,23 @@ namespace DataMiner
             pricebox.Tag = currentTab.Header.ToString().ToUpper();
             hasEvents.Add(pricebox);
             pricebox.KeyUp += new KeyEventHandler(setOptionPrice);
-            pricebox.PreviewMouseUp += new MouseButtonEventHandler(price_MouseDown);
+            //pricebox.PreviewMouseUp += new MouseButtonEventHandler(price_MouseDown);
 
             TextBox daysbox = new TextBox();
             //daysbox.Text = "Enter Days";
             daysbox.Tag = currentTab.Header.ToString().ToUpper();
             hasEvents.Add(daysbox);
             daysbox.KeyUp += new KeyEventHandler(setDaysLeft);
-            daysbox.MouseUp += new MouseButtonEventHandler(price_MouseDown);
+            //daysbox.MouseUp += new MouseButtonEventHandler(price_MouseDown);
+
+            probdata = new TextBlock();
+            probdata.Text = "Enter Option Info to Calculate";
+            probdata.Margin = new Thickness(2);
 
             boxes.Children.Add(strikebox);
             boxes.Children.Add(pricebox);
             boxes.Children.Add(daysbox);
+            boxes.Children.Add(probdata);
 
             #endregion
 
@@ -309,6 +363,7 @@ namespace DataMiner
 
             //Things added to the stack panel
             TextBlock name = new TextBlock();
+            name.HorizontalAlignment = HorizontalAlignment.Center;
             name.Text = currentTab.Header.ToString().ToUpper();
             name.FontWeight = FontWeights.Bold;
             DockPanel.SetDock(name, Dock.Top);

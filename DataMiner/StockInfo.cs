@@ -17,6 +17,7 @@ namespace DataMiner
         public double Max { get; set; }
         public double MinNormDCGR { get; set; }
         public double MaxNormDCGR { get; set; }
+        public double SpotPrice { get; set; }
         //OtherStuff
     }
 }

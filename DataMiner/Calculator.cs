@@ -9,6 +9,7 @@ namespace DataMiner
     {
         public static Dictionary<Util.TimeType, StockInfo> calculateAllStockInfo(List<double> data)
         {
+            double spot = data[0];
             if (data.Count < 252)
             {
                 Console.Write("Error: insufficient data\n");
@@ -18,13 +19,13 @@ namespace DataMiner
             data = DailyContGrowthRate(convertToLog(data));
 
             //Data is arranged newest to oldest
-            results.Add(Util.Domain.THIRTY_DAYS, calcStockInfo(data.GetRange(0, Util.Domain.THIRTY - 1)));
-            results.Add(Util.Domain.SIXY_DAYS, calcStockInfo(data.GetRange(0, Util.Domain.SIXTY - 1)));
-            results.Add(Util.Domain.ONE_YEAR, calcStockInfo(data.GetRange(0, Util.Domain.YEAR - 1)));
+            results.Add(Util.Domain.THIRTY_DAYS, calcStockInfo(data.GetRange(0, Util.Domain.THIRTY - 1), spot));
+            results.Add(Util.Domain.SIXY_DAYS, calcStockInfo(data.GetRange(0, Util.Domain.SIXTY - 1), spot));
+            results.Add(Util.Domain.ONE_YEAR, calcStockInfo(data.GetRange(0, Util.Domain.YEAR - 1), spot));
             return results;
         }
 
-        private static StockInfo calcStockInfo(List<double> data)
+        private static StockInfo calcStockInfo(List<double> data, double spotPrice)
         {
             StockInfo results = new StockInfo();
             //Calcuating DCGR yields 1 less observation
@@ -33,6 +34,7 @@ namespace DataMiner
             results.Beta = StandardDeviation(data, results.Alpha);
             results.Max = data.Max();
             results.Min = data.Min();
+            results.SpotPrice = spotPrice;
 
             List<double> NormDCGR = NormalizedDailyContGrowthRate(data, results.Alpha, results.Beta);
             results.MaxNormDCGR = NormDCGR.Max();

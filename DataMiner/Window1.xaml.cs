@@ -57,13 +57,13 @@ namespace DataMiner
             List<double> data = webInteractor.Search(searchItem);
             List<Image> charts = new List<Image>();
 
-            foreach (Util.TimeType time in Util.Domain.TIMES)
-            {
-                charts.Add(webInteractor.getGraph(time));
-            }
-
             StockInfo info = new StockInfo();
             Dictionary<Util.TimeType, StockInfo> newStockInformation = Calculator.calculateAllStockInfo(data);
+            foreach (Util.TimeType time in Util.Domain.TIMES)
+            {
+                newStockInformation[time].Graph = webInteractor.getGraph(time);
+                //charts.Add(webInteractor.getGraph(time));
+            }
             //Dictionary<Util.TimeType, StockInfo> newStockInformation = new Dictionary<DataMiner.Util.TimeType, StockInfo>();
             window.dealWithResults(searchItem, newStockInformation);
             numWindows++;
