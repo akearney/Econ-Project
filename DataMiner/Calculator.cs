@@ -58,7 +58,15 @@ namespace DataMiner
 
         private static List<double> convertToLog(List<double> data)
         {
-            data.ForEach(i => Math.Log(i));
+            for (int i = 0; i < data.Count; i++)
+            {
+                data[i] = Math.Log(data[i]);
+            }
+            //Debugging
+            //for (int i = 0; i < data.Count; i++)
+            //{
+            //    Console.Write(data[i].ToString() + "\n");
+            //}
             return data;
         }
 
@@ -85,8 +93,10 @@ namespace DataMiner
 
         public static double probabilityCalculator(double spotPrice, double strikePrice, double alpha, double beta, int dtm)
         {
-            double growthRateToStrike = Math.Log(spotPrice - strikePrice);
-            double timeAdjBeta = beta * Math.Sqrt(dtm);
+            //Debugging
+            //Console.Write("spot, strike, alpha, beta, dtm: " + spotPrice.ToString() + " " + strikePrice.ToString() + " " + alpha.ToString() + " " + beta.ToString() + " " + dtm.ToString());
+            double growthRateToStrike = Math.Log(spotPrice / strikePrice);
+            double timeAdjBeta = beta * Math.Sqrt((double) dtm);
 
             return cumNormDist(growthRateToStrike, alpha, timeAdjBeta);
         }

@@ -19,7 +19,7 @@ namespace DataMiner
     public partial class DataWindow : Window
     {
         #region Constants
-        private const int SIGFIG = 2;
+        private const int SIGFIG = 4;
         #endregion
 
         //This dictionary is basically ALL of the data loaded in
@@ -377,6 +377,15 @@ namespace DataMiner
             daysdata.HorizontalAlignment = HorizontalAlignment.Left;
             info.Children.Add(days);
             data.Children.Add(daysdata);
+
+            TextBlock spot = new TextBlock();
+            spot.Text = "Last Price: ";
+            spot.HorizontalAlignment = HorizontalAlignment.Right;
+            TextBlock spotdata = new TextBlock();
+            spotdata.Text = stockInfo.SpotPrice.ToString();
+            spotdata.HorizontalAlignment = HorizontalAlignment.Left;
+            info.Children.Add(spot);
+            data.Children.Add(spotdata);
 
             TextBlock alpha = new TextBlock();
             alpha.Text = "Alpha: ";

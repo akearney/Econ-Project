@@ -85,7 +85,7 @@ namespace DataMiner
             }
 
             //Debugging
-            //for (int i = 0; i < result.Count; i++)
+            //for (int i = 0; i < data.Count; i++)
             //{
             //    Console.Write(data[i].ToString() + "\n");
             //}
@@ -104,7 +104,8 @@ namespace DataMiner
                 query += timeFilter[duration];
 
                 Uri url = new Uri(CHART_BASE + query);
-                Console.Write(CHART_BASE + query);
+                //Debugging
+                //Console.Write(CHART_BASE + query);
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
 
                 //See the response that yahoo creates

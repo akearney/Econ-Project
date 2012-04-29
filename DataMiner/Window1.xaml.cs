@@ -16,7 +16,7 @@ using System.Windows.Shapes;
 namespace DataMiner
 {
     /// <summary>
-    /// Interaction logic for Window1.xaml. Hi ANDY!
+    /// Interaction logic for Window1.xaml.
     /// </summary>
     public partial class Window1 : Window
     {
@@ -54,6 +54,7 @@ namespace DataMiner
 
         public void newSearch(string searchItem, DataWindow window)
         {
+            searchItem = searchItem.ToUpper();
             List<double> data = webInteractor.Search(searchItem);
             List<Image> charts = new List<Image>();
 
