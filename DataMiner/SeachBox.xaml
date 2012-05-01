@@ -5,8 +5,8 @@
     <Grid>
         <TextBlock Text="Enter Stock Symbol" HorizontalAlignment="Center"/>
         <StackPanel>
-            <TextBox Name="SearchBox" Width="100" Height="20" MouseDown="searchBoxMouseDown" GotKeyboardFocus="searchBoxMouseDown">
-                Enter Stock Code
+            <TextBox Name="SearchBox" Width="104" Height="20" MouseDown="searchBoxMouseDown" GotKeyboardFocus="searchBoxMouseDown">
+                Enter Stock Symbol
             </TextBox>
             <Button Name="SearchButton" Width="50" Height="20" Content="Search" Click="searchButtonClick" />
         </StackPanel>

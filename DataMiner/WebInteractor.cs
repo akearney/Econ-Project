@@ -46,52 +46,60 @@ namespace DataMiner
 
         public List<double> Search(string search)
         {
-            currentSearch = search;
-
-            //Get the date
-            int todayDay = System.DateTime.Now.Day;
-            int todayMonth = System.DateTime.Now.Month;
-            int todayYear = System.DateTime.Now.Year;
-
-            //Create query; note that yahoo indexes months from 0 (why???)
-            string query = currentSearch;
-            query += String.Format(URL_FROM_DATE, todayMonth - 1, todayDay.ToString(), todayYear - 1);
-            query += String.Format(URL_TO_DATE, todayMonth - 1, todayDay.ToString(), todayYear);
-
-            //Create the url for the historical prices
-            Uri url = new Uri(URL_BASE + query + URL_END);
-            WebRequest webRequest = WebRequest.Create(url);
-
-            //Debugging
-            //Console.Write(URL_BASE + query + URL_END + "\n");
-
-            //Craete stream
-            StreamReader webStream = new StreamReader(webRequest.GetResponse().GetResponseStream());
-            
-            List<double> data = new List<double>();
-            string line;
-
-            //Clear header
-            if ((line = webStream.ReadLine()) == null)
+            try
             {
-                Console.Write("Error: file improperly formatted\n");
-            }
+                currentSearch = search;
 
-            while ((line = webStream.ReadLine()) != null)
+                //Get the date
+                int todayDay = System.DateTime.Now.Day;
+                int todayMonth = System.DateTime.Now.Month;
+                int todayYear = System.DateTime.Now.Year;
+
+                //Create query; note that yahoo indexes months from 0 (why???)
+                string query = currentSearch;
+                query += String.Format(URL_FROM_DATE, todayMonth - 1, todayDay.ToString(), todayYear - 1);
+                query += String.Format(URL_TO_DATE, todayMonth - 1, todayDay.ToString(), todayYear);
+
+                //Create the url for the historical prices
+                Uri url = new Uri(URL_BASE + query + URL_END);
+                WebRequest webRequest = WebRequest.Create(url);
+
+                //Debugging
+                //Console.Write(URL_BASE + query + URL_END + "\n");
+
+                //Craete stream
+                StreamReader webStream = new StreamReader(webRequest.GetResponse().GetResponseStream());
+
+                List<double> data = new List<double>();
+                string line;
+
+                //Clear header
+                if ((line = webStream.ReadLine()) == null)
+                {
+                    Console.Write("Error: file improperly formatted\n");
+                }
+
+                while ((line = webStream.ReadLine()) != null)
+                {
+                    string[] entries = line.Split(',');
+                    double close = double.Parse(entries[CLOSE_COL]);
+                    data.Add(close);
+                }
+
+                //Debugging
+                //for (int i = 0; i < data.Count; i++)
+                //{
+                //    Console.Write(data[i].ToString() + "\n");
+                //}
+
+                webStream.Close();
+                return data;
+            }
+            catch (Exception)
             {
-                string[] entries = line.Split(',');
-                double close = double.Parse(entries[CLOSE_COL]);
-                data.Add(close);
+                MessageBox.Show("Error downloading the data.");
+                return null;
             }
-
-            //Debugging
-            //for (int i = 0; i < data.Count; i++)
-            //{
-            //    Console.Write(data[i].ToString() + "\n");
-            //}
-
-            webStream.Close();
-            return data;
         }
 
         public System.Windows.Controls.Image getGraph(Util.TimeType duration)
@@ -119,50 +127,11 @@ namespace DataMiner
              
                 sr.Close();
                 return convertDrawingImgToWindowImg(chart);
-                
-                /***
-                //Download in chuncks
-                byte[] buffer = new byte[1024];
-
-                //Get Total Size
-                int dataLength = (int)response.ContentLength;
-
-                MemoryStream stream = new MemoryStream();
-
-                while (true)
-                {
-                    //Try to read the data
-                    int bytesRead = sr.Read(buffer, 0, buffer.Length);
-
-                    if (bytesRead == 0)
-                    {
-                        break;
-                    }
-                    else
-                    {
-                        //Write the downloaded data
-                        stream.Write(buffer, 0, bytesRead);
-                    }
-                }
-                //Convert the downloaded stream to a byte array
-                downloadedData = stream.ToArray();
-                System.Windows.Media.Imaging.PngBitmapDecoder decoder =
-                    new System.Windows.Media.Imaging.PngBitmapDecoder(stream, System.Windows.Media.Imaging.BitmapCreateOptions.PreservePixelFormat, System.Windows.Media.Imaging.BitmapCacheOption.Default);
-                System.Windows.Media.Imaging.BitmapSource bitmapSource = decoder.Frames[0];
-                stream.Close();
-                                // Draw the Image
-                Image myImage = new Image();
-                myImage.Source = bitmapSource;
-                myImage.Margin = new Thickness(20);
-
-      
-                return myImage;
-                ***/
 
             }
             catch (Exception)
             {
-                MessageBox.Show("Error downloading the graph");
+                MessageBox.Show("Error downloading the graph.");
                 return null;
             }
         }
