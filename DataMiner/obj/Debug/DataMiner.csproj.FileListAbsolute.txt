@@ -1,15 +1,3 @@
-H:\.ssh\Econ-Project\DataMiner\obj\Debug\DataMiner.exe
-H:\.ssh\Econ-Project\DataMiner\obj\Debug\DataMiner.pdb
-H:\.ssh\Econ-Project\DataMiner\bin\Debug\DataMiner.exe
-H:\.ssh\Econ-Project\DataMiner\bin\Debug\DataMiner.pdb
-H:\.ssh\Econ-Project\DataMiner\obj\Debug\ResolveAssemblyReference.cache
-H:\.ssh\Econ-Project\DataMiner\obj\Debug\Window1.baml
-H:\.ssh\Econ-Project\DataMiner\obj\Debug\Window1.g.cs
-H:\.ssh\Econ-Project\DataMiner\obj\Debug\App.g.cs
-H:\.ssh\Econ-Project\DataMiner\obj\Debug\DataMiner_MarkupCompile.cache
-H:\.ssh\Econ-Project\DataMiner\obj\Debug\DataMiner.g.resources
-H:\.ssh\Econ-Project\DataMiner\obj\Debug\DataMiner.Properties.Resources.resources
-H:\.ssh\Econ-Project\DataMiner\obj\Debug\DataMiner.csproj.GenerateResource.Cache
 \\hmc.edu\hmcdfs\HMC_2013\akearney\My Documents\Visual Studio 2008\Projects\DataMiner\DataMiner\bin\Debug\DataMiner.exe
 \\hmc.edu\hmcdfs\HMC_2013\akearney\My Documents\Visual Studio 2008\Projects\DataMiner\DataMiner\bin\Debug\DataMiner.pdb
 \\hmc.edu\hmcdfs\HMC_2013\akearney\My Documents\Visual Studio 2008\Projects\DataMiner\DataMiner\obj\Debug\ResolveAssemblyReference.cache
@@ -26,7 +14,19 @@ H:\.ssh\Econ-Project\DataMiner\obj\Debug\DataMiner.csproj.GenerateResource.Cache
 \\hmc.edu\hmcdfs\HMC_2013\akearney\My Documents\Visual Studio 2008\Projects\DataMiner\DataMiner\obj\Debug\DataMiner.csproj.GenerateResource.Cache
 \\hmc.edu\hmcdfs\HMC_2013\akearney\My Documents\Visual Studio 2008\Projects\DataMiner\DataMiner\obj\Debug\DataMiner.exe
 \\hmc.edu\hmcdfs\HMC_2013\akearney\My Documents\Visual Studio 2008\Projects\DataMiner\DataMiner\obj\Debug\DataMiner.pdb
+H:\.ssh\Econ-Project\DataMiner\bin\Debug\DataMiner.exe
+H:\.ssh\Econ-Project\DataMiner\bin\Debug\DataMiner.pdb
+H:\.ssh\Econ-Project\DataMiner\obj\Debug\ResolveAssemblyReference.cache
 H:\.ssh\Econ-Project\DataMiner\obj\Debug\DataWindow.baml
 H:\.ssh\Econ-Project\DataMiner\obj\Debug\SeachBox.baml
+H:\.ssh\Econ-Project\DataMiner\obj\Debug\Window1.baml
 H:\.ssh\Econ-Project\DataMiner\obj\Debug\DataWindow.g.cs
 H:\.ssh\Econ-Project\DataMiner\obj\Debug\SeachBox.g.cs
+H:\.ssh\Econ-Project\DataMiner\obj\Debug\Window1.g.cs
+H:\.ssh\Econ-Project\DataMiner\obj\Debug\App.g.cs
+H:\.ssh\Econ-Project\DataMiner\obj\Debug\DataMiner_MarkupCompile.cache
+H:\.ssh\Econ-Project\DataMiner\obj\Debug\DataMiner.g.resources
+H:\.ssh\Econ-Project\DataMiner\obj\Debug\DataMiner.Properties.Resources.resources
+H:\.ssh\Econ-Project\DataMiner\obj\Debug\DataMiner.csproj.GenerateResource.Cache
+H:\.ssh\Econ-Project\DataMiner\obj\Debug\DataMiner.exe
+H:\.ssh\Econ-Project\DataMiner\obj\Debug\DataMiner.pdb

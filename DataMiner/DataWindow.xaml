@@ -1,14 +1,14 @@
 ﻿<Window x:Class="DataMiner.DataWindow" 
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    Title="DataWindow" Height="600" Width="600">
-    <Grid>
+    Title="DataWindow" Height="620" Width="620">
+    <Grid Height="600">
         <TabControl Name="TimeTabs" FlowDirection="RightToLeft">
             <TabItem Name="OneYear" Header="1 Year" MouseUp="TimePeriodClick" />
             <TabItem Name="SixtyDays" Header="60 Days" MouseUp="TimePeriodClick" />
             <TabItem Name="ThirtyDays" Header="30 Days" MouseUp="TimePeriodClick" />
         </TabControl>
-        <TabControl Name="StockSymbolTabs" TabStripPlacement="Left" Height="520" >
+        <TabControl Name="StockSymbolTabs" TabStripPlacement="Left" Height="550" >
             <TabControl.Resources>
                 <Style TargetType="{x:Type TabItem}">
                     <Setter Property="Padding" Value="4" />
