@@ -4,12 +4,12 @@
 winexe
 C#
 .cs
-H:\.ssh\Econ-Project\DataMiner\obj\Debug\
+\\hmc.edu\hmcdfs\HMC_2013\akearney\My Documents\Visual Studio 2008\Projects\DataMiner\DataMiner\obj\Debug\
 DataMiner
 none
 false
 DEBUG;TRACE
-H:\.ssh\Econ-Project\DataMiner\App.xaml
+\\hmc.edu\hmcdfs\HMC_2013\akearney\My Documents\Visual Studio 2008\Projects\DataMiner\DataMiner\App.xaml
 3300473740
 
 12643901375
