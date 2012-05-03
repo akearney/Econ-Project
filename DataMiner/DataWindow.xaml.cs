@@ -146,6 +146,8 @@ namespace DataMiner
         {
             TextBox box = sender as TextBox;
             double data;
+            if (box.Text == "")
+                return;
             if (double.TryParse(box.Text, out data))
                 optionPrice = data;
             else
@@ -160,12 +162,15 @@ namespace DataMiner
         {
             TextBox box = sender as TextBox;
             int data;
+            if (box.Text == "")
+                return;
             if (int.TryParse(box.Text, out data))
                 daysToExperation = data;
             else
             {
                 MessageBox.Show("You can only enter integers here");
-                box.Text = box.Text.Substring(0,box.Text.Length - 1);
+                if (box.Text.Length >0)
+                    box.Text = box.Text.Substring(0,box.Text.Length - 1);
                 box.Select(box.Text.Length, 0);
             }
             updateProbability();
@@ -192,7 +197,7 @@ namespace DataMiner
                 TabItem newTab = createTab(stockCall);
                 //UpdateContent
                 this.StockSymbolTabs.Items.Add(newTab);
-                this.StockSymbolTabs.SelectedIndex = this.StockSymbolTabs.Items.Count - 1;
+                //this.StockSymbolTabs.SelectedIndex = this.StockSymbolTabs.Items.Count - 1;
             }
         }
 
@@ -214,6 +219,7 @@ namespace DataMiner
             newTab.Header = stockCall;
             updateTab(newTab, currentTime);
             newTab.MouseDoubleClick += new MouseButtonEventHandler(newWindow);
+            newTab.MouseUp += new MouseButtonEventHandler(newTab_MouseUp);
             return newTab;
 
         }
@@ -227,6 +233,11 @@ namespace DataMiner
             }
             catch
             { }
+        }
+
+        private void newTab_MouseUp(object sender, RoutedEventArgs e)
+        {
+            updateTab(sender as TabItem, currentTime);
         }
 
         private void updateTab(TabItem currentTab, Util.TimeType time)
